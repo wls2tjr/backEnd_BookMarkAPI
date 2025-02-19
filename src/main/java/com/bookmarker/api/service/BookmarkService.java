@@ -2,7 +2,9 @@ package com.bookmarker.api.service;
 
 import com.bookmarker.api.domain.Bookmark;
 import com.bookmarker.api.domain.BookmarkRepository;
+import com.bookmarker.api.dto.BookmarksDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,11 +25,12 @@ public class BookmarkService {
 //    }
 
     @Transactional(readOnly = true)
-    public List<Bookmark> getBookmarks(Integer page) {
+    public BookmarksDTO getBookmarks(Integer page) {
         //JPA 의 페이지 언어가 0부터 시작하기때문
         int pageNo = page < 1 ? 0 : page - 1;
         Pageable pageable = PageRequest.of(pageNo, 10, Sort.Direction.DESC, "id");
-        return repository.findAll(pageable).getContent();
+        Page<Bookmark> bookmarkPage = repository.findAll(pageable);//page <T>
+        return new BookmarksDTO(bookmarkPage);
     }
     
 }
